@@ -336,9 +336,9 @@ mod layout_tests_keys {
 
     #[derive(Properties, Clone)]
     struct CountingCompProps {
-        id: usize,
+        pub id: usize,
         #[prop_or(false)]
-        can_change: bool,
+        pub can_change: bool,
     }
 
     impl Component for Comp {

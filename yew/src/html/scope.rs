@@ -579,7 +579,7 @@ mod tests {
 
     #[derive(Clone, Properties, Default)]
     struct ChildProps {
-        lifecycle: Rc<RefCell<Vec<String>>>,
+        pub lifecycle: Rc<RefCell<Vec<String>>>,
     }
 
     struct Child {
@@ -616,11 +616,11 @@ mod tests {
 
     #[derive(Clone, Properties, Default)]
     struct Props {
-        lifecycle: Rc<RefCell<Vec<String>>>,
-        create_message: Option<bool>,
-        update_message: RefCell<Option<bool>>,
-        view_message: RefCell<Option<bool>>,
-        rendered_message: RefCell<Option<bool>>,
+        pub lifecycle: Rc<RefCell<Vec<String>>>,
+        pub create_message: Option<bool>,
+        pub update_message: RefCell<Option<bool>>,
+        pub view_message: RefCell<Option<bool>>,
+        pub rendered_message: RefCell<Option<bool>>,
     }
 
     struct Comp {

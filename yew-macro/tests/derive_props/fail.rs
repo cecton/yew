@@ -10,7 +10,7 @@ mod t1 {
     pub struct Props {
         // ERROR: optional params must implement default
         #[prop_or_default]
-        value: Value,
+        pub value: Value,
     }
 }
 
@@ -20,7 +20,7 @@ mod t2 {
     pub struct Props {
         // ERROR: old syntax no longer supported
         #[props(default)]
-        value: String,
+        pub value: String,
     }
 }
 
@@ -28,7 +28,7 @@ mod t3 {
     use super::*;
     #[derive(Clone, Properties)]
     pub struct Props {
-        value: String,
+        pub value: String,
     }
 
     fn required_props_should_be_set() {
@@ -40,8 +40,8 @@ mod t4 {
     use super::*;
     #[derive(Clone, Properties)]
     pub struct Props {
-        b: i32,
-        a: i32,
+        pub b: i32,
+        pub a: i32,
     }
 
     fn enforce_ordering() {
@@ -55,7 +55,7 @@ mod t5 {
     pub struct Props {
         // ERROR: prop_or must be given a value
         #[prop_or()]
-        value: String,
+        pub value: String,
     }
 }
 
@@ -65,7 +65,7 @@ mod t6 {
     pub struct Props {
         // ERROR: 123 is not a String
         #[prop_or(123)]
-        value: String,
+        pub value: String,
     }
 }
 
@@ -75,7 +75,7 @@ mod t7 {
     pub struct Props {
         // ERROR: 123 is not a function
         #[prop_or_else(123)]
-        value: i32,
+        pub value: i32,
     }
 }
 
@@ -85,7 +85,7 @@ mod t8 {
     pub struct Props {
         // ERROR: cannot find function foo in this scope
         #[prop_or_else(foo)]
-        value: String,
+        pub value: String,
     }
 }
 
@@ -95,7 +95,7 @@ mod t9 {
     pub struct Props {
         // ERROR: the function must take no arguments
         #[prop_or_else(foo)]
-        value: String,
+        pub value: String,
     }
 
     fn foo(bar: i32) -> String {
@@ -109,11 +109,21 @@ mod t10 {
     pub struct Props {
         // ERROR: the function returns incompatible types
         #[prop_or_else(foo)]
-        value: String,
+        pub value: String,
     }
 
     fn foo() -> i32 {
         unimplemented!()
+    }
+}
+
+mod t11 {
+    use super::*;
+    #[derive(Clone, Properties)]
+    pub struct Props {
+        // ERROR: only public fields are allowed
+        #[prop_or_default]
+        value: String,
     }
 }
 

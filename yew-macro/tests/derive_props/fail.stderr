@@ -4,6 +4,12 @@ error: unexpected end of input, expected expression
 57 |         #[prop_or()]
    |                  ^^
 
+error: Only fields of visibility pub or pub(crate) are allowed.
+   --> $DIR/fail.rs:125:9
+    |
+125 |         #[prop_or_default]
+    |         ^
+
 error: cannot find attribute `props` in this scope
   --> $DIR/fail.rs:22:11
    |

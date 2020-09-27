@@ -11,7 +11,7 @@
 //!
 //! #[derive(Clone, Properties)]
 //! struct Props {
-//!     prop: String,
+//!     pub prop: String,
 //! };
 //!
 //! # enum Msg { Submit }

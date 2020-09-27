@@ -166,6 +166,13 @@ impl TryFrom<Field> for PropField {
     type Error = Error;
 
     fn try_from(field: Field) -> Result<Self> {
+        if !matches!(field.vis, Visibility::Public(_) | Visibility::Crate(_)) {
+            return Err(Error::new(
+                field.span(),
+                "Only fields of visibility pub or pub(crate) are allowed.",
+            ));
+        }
+
         Ok(PropField {
             attr: Self::attribute(&field)?,
             ty: field.ty,

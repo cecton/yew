@@ -8,7 +8,7 @@ mod t1 {
     #[derive(Clone, Properties)]
     pub struct Props<T: Clone + Default> {
         #[prop_or_default]
-        value: T,
+        pub value: T,
     }
 
     fn optional_prop_generics_should_work() {
@@ -24,7 +24,7 @@ mod t2 {
     struct Value;
     #[derive(Clone, Properties)]
     pub struct Props<T: Clone> {
-        value: T,
+        pub value: T,
     }
 
     fn required_prop_generics_should_work() {
@@ -37,9 +37,9 @@ mod t3 {
 
     #[derive(Clone, Properties)]
     pub struct Props {
-        b: i32,
+        pub b: i32,
         #[prop_or_default]
-        a: i32,
+        pub a: i32,
     }
 
     fn order_is_alphabetized() {
@@ -57,7 +57,7 @@ mod t4 {
         T: Clone + Default,
     {
         #[prop_or_default]
-        value: T,
+        pub value: T,
     }
 
     fn optional_prop_generics_should_work() {
@@ -72,8 +72,8 @@ mod t5 {
     #[derive(Clone, Properties)]
     pub struct Props<'a, T: Clone + Default + 'a> {
         #[prop_or_default]
-        static_value: &'static str,
-        value: &'a T,
+        pub static_value: &'static str,
+        pub value: &'a T,
     }
 
     fn optional_prop_generics_with_lifetime_should_work() {
@@ -94,7 +94,7 @@ mod t6 {
     where
         <T as FromStr>::Err: Clone,
     {
-        value: Result<T, <T as FromStr>::Err>,
+        pub value: Result<T, <T as FromStr>::Err>,
     }
 
     fn required_prop_generics_with_where_clause_should_work() {
@@ -116,7 +116,7 @@ mod t7 {
     #[derive(Clone, Properties)]
     pub struct Props {
         #[prop_or(Foo::One)]
-        value: Foo,
+        pub value: Foo,
     }
 
     fn prop_or_value_should_work() {
@@ -132,7 +132,7 @@ mod t8 {
     #[derive(Clone, Properties)]
     pub struct Props {
         #[prop_or_else(|| 123)]
-        value: i32,
+        pub value: i32,
     }
 
     fn prop_or_else_closure_should_work() {
@@ -152,7 +152,7 @@ mod t9 {
         <T as FromStr>::Err: Clone,
     {
         #[prop_or_else(default_value)]
-        value: Result<T, <T as FromStr>::Err>,
+        pub value: Result<T, <T as FromStr>::Err>,
     }
 
     fn default_value<T: FromStr + Clone>() -> Result<T, <T as FromStr>::Err>
@@ -180,8 +180,23 @@ mod t10 {
         S: Clone,
         M: Clone,
     {
-        bar: S,
-        baz: M,
+        pub bar: S,
+        pub baz: M,
+    }
+}
+
+mod t11 {
+    use super::*;
+
+    #[derive(Clone, Properties)]
+    pub struct Props<T: Clone + Default> {
+        #[prop_or_default]
+        pub(crate) value: T,
+    }
+
+    fn optional_prop_generics_should_work() {
+        Props::<bool>::builder().build();
+        Props::<bool>::builder().value(true).build();
     }
 }
 

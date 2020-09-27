@@ -298,9 +298,9 @@ mod tests {
     #[derive(Clone, PartialEq, Properties)]
     struct Props {
         #[prop_or_default]
-        field_1: u32,
+        pub field_1: u32,
         #[prop_or_default]
-        field_2: u32,
+        pub field_2: u32,
     }
 
     impl Component for Comp {
@@ -576,7 +576,7 @@ mod layout_tests {
     #[derive(Properties, Clone)]
     struct CompProps {
         #[prop_or_default]
-        children: Children,
+        pub children: Children,
     }
 
     impl<T: 'static> Component for Comp<T> {
