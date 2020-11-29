@@ -9,6 +9,7 @@ mod html_block;
 mod html_component;
 mod html_dashed_name;
 mod html_element;
+mod html_for_loop;
 mod html_if;
 mod html_iterable;
 mod html_list;
@@ -19,7 +20,8 @@ use html_block::HtmlBlock;
 use html_component::HtmlComponent;
 pub use html_dashed_name::HtmlDashedName;
 use html_element::HtmlElement;
-use html_if::HtmlIf;
+use html_for_loop::HtmlForLoop;
+use html_if::{HtmlBranch, HtmlIf};
 use html_iterable::HtmlIterable;
 use html_list::HtmlList;
 use html_node::HtmlNode;
@@ -31,6 +33,7 @@ pub enum HtmlType {
     List,
     Element,
     If,
+    ForLoop,
     Empty,
 }
 
@@ -40,6 +43,7 @@ pub enum HtmlTree {
     List(Box<HtmlList>),
     Element(Box<HtmlElement>),
     If(Box<HtmlIf>),
+    ForLoop(Box<HtmlForLoop>),
     Empty,
 }
 
@@ -54,6 +58,7 @@ impl Parse for HtmlTree {
             HtmlType::Block => HtmlTree::Block(Box::new(input.parse()?)),
             HtmlType::List => HtmlTree::List(Box::new(input.parse()?)),
             HtmlType::If => HtmlTree::If(Box::new(input.parse()?)),
+            HtmlType::ForLoop => HtmlTree::ForLoop(Box::new(input.parse()?)),
         };
         Ok(html_tree)
     }
@@ -73,6 +78,8 @@ impl PeekValue<HtmlType> for HtmlTree {
             Some(HtmlType::Block)
         } else if HtmlIf::peek(cursor).is_some() {
             Some(HtmlType::If)
+        } else if HtmlForLoop::peek(cursor).is_some() {
+            Some(HtmlType::ForLoop)
         } else {
             None
         }
@@ -89,7 +96,8 @@ impl ToTokens for HtmlTree {
             HtmlTree::Element(tag) => tag.to_tokens(tokens),
             HtmlTree::List(list) => list.to_tokens(tokens),
             HtmlTree::Block(block) => block.to_tokens(tokens),
-            HtmlTree::If(block) => block.to_tokens(tokens),
+            HtmlTree::If(html_if) => html_if.to_tokens(tokens),
+            HtmlTree::ForLoop(html_for_loop) => html_for_loop.to_tokens(tokens),
         }
     }
 }

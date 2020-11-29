@@ -44,7 +44,7 @@ impl Parse for HtmlIf {
 
 impl ToTokens for HtmlIf {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let HtmlIf {
+        let Self {
             if_token,
             cond,
             then_branch,
