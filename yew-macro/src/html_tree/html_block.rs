@@ -6,11 +6,13 @@ use syn::buffer::Cursor;
 use syn::parse::{Parse, ParseStream};
 use syn::{braced, token};
 
+#[derive(Debug)]
 pub struct HtmlBlock {
     content: BlockContent,
     brace: token::Brace,
 }
 
+#[derive(Debug)]
 enum BlockContent {
     Node(Box<HtmlNode>),
     Iterable(Box<HtmlIterable>),

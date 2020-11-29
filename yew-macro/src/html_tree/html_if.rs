@@ -8,6 +8,7 @@ use syn::parse::{Parse, ParseStream, Result as ParseResult};
 use syn::spanned::Spanned;
 use syn::{braced, token, Expr, Token};
 
+#[derive(Debug)]
 pub struct HtmlIf {
     if_token: Token![if],
     cond: Box<Expr>,
@@ -63,6 +64,7 @@ impl ToTokens for HtmlIf {
     }
 }
 
+#[derive(Debug)]
 pub struct HtmlBranch {
     _brace: token::Brace,
     root: HtmlRoot,
@@ -97,6 +99,7 @@ impl ToTokens for HtmlBranch {
     }
 }
 
+#[derive(Debug)]
 pub enum HtmlBranchOrIf {
     Branch(HtmlBranch),
     If(HtmlIf),

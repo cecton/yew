@@ -12,6 +12,7 @@ mod kw {
     syn::custom_keyword!(with);
 }
 
+#[derive(Debug)]
 pub struct WithProps {
     pub special: SpecialProps,
     pub with: kw::with,
@@ -77,6 +78,7 @@ impl Parse for WithProps {
     }
 }
 
+#[derive(Debug)]
 pub enum ComponentProps {
     List(Props),
     With(Box<WithProps>),

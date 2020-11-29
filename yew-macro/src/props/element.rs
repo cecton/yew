@@ -4,6 +4,7 @@ use std::collections::HashSet;
 use syn::parse::{Parse, ParseStream};
 use syn::{Expr, ExprTuple};
 
+#[derive(Debug)]
 pub enum ClassesForm {
     Tuple(ExprTuple),
     Single(Box<Expr>),
@@ -17,6 +18,7 @@ impl ClassesForm {
     }
 }
 
+#[derive(Debug)]
 pub struct ElementProps {
     pub attributes: Vec<Prop>,
     pub listeners: Vec<Prop>,

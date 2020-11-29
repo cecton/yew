@@ -29,6 +29,7 @@ fn error_replace_span(err: syn::Error, from: Span, to: impl ToTokens) -> syn::Er
 /// Helper type for parsing HTML tags.
 /// The struct only stores the associated tokens, not the content of the tag.
 /// This is meant to mirror the design of delimiters in `syn`.
+#[derive(Debug)]
 pub struct TagTokens {
     pub lt: Token![<],
     pub div: Option<Token![/]>,

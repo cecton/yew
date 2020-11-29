@@ -8,6 +8,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
 use syn::{Expr, Token};
 
+#[derive(Debug)]
 pub struct HtmlIterable(Expr);
 
 impl PeekValue<()> for HtmlIterable {

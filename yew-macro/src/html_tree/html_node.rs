@@ -8,6 +8,7 @@ use syn::parse::{Parse, ParseStream, Result};
 use syn::spanned::Spanned;
 use syn::{Expr, Lit};
 
+#[derive(Debug)]
 pub enum HtmlNode {
     Literal(Box<Lit>),
     Expression(Box<Expr>),

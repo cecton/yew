@@ -10,6 +10,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
 use syn::{Block, Ident, Token};
 
+#[derive(Debug)]
 pub struct HtmlElement {
     name: TagName,
     props: ElementProps,
@@ -412,6 +413,7 @@ fn to_wrapped_listener(name: &Ident, value: impl ToTokens) -> TokenStream {
     }
 }
 
+#[derive(Debug)]
 struct DynamicName {
     at: Token![@],
     expr: Option<Block>,
@@ -459,6 +461,7 @@ enum TagKey {
     Expr,
 }
 
+#[derive(Debug)]
 enum TagName {
     Lit(HtmlDashedName),
     Expr(DynamicName),

@@ -11,6 +11,7 @@ use syn::{
     Expr, Token,
 };
 
+#[derive(Debug)]
 pub enum PropPunct {
     Eq(Token![=]),
     Colon(Token![:]),
@@ -24,6 +25,7 @@ impl ToTokens for PropPunct {
     }
 }
 
+#[derive(Debug)]
 pub struct Prop {
     pub label: HtmlDashedName,
     pub question_mark: Option<Token![?]>,
@@ -88,6 +90,7 @@ impl Parse for Prop {
 ///
 /// The list may contain multiple props with the same label.
 /// Use `check_no_duplicates` to ensure that there are no duplicates.
+#[derive(Debug)]
 pub struct SortedPropList(Vec<Prop>);
 impl SortedPropList {
     const CHILDREN_LABEL: &'static str = "children";
@@ -214,7 +217,7 @@ impl Deref for SortedPropList {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct SpecialProps {
     pub node_ref: Option<Prop>,
     pub key: Option<Prop>,
@@ -248,6 +251,7 @@ impl SpecialProps {
     }
 }
 
+#[derive(Debug)]
 pub struct Props {
     pub special: SpecialProps,
     pub prop_list: SortedPropList,

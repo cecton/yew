@@ -12,6 +12,7 @@ use syn::{
     TypePath,
 };
 
+#[derive(Debug)]
 pub struct HtmlComponent {
     ty: Type,
     props: ComponentProps,

@@ -9,7 +9,7 @@ use syn::ext::IdentExt;
 use syn::parse::{Parse, ParseStream};
 use syn::{spanned::Spanned, LitStr, Token};
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct HtmlDashedName {
     pub name: Ident,
     pub extended: Vec<(Token![-], Ident)>,
