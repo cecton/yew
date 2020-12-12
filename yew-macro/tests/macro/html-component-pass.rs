@@ -204,10 +204,11 @@ fn compile_pass() {
     let node_ref = NodeRef::default();
     html! {
         <>
-            <Child with props />
-            <Child: with props2, /> // backwards compat
-            <Child ref=node_ref.clone() with props3 />
-            <Child with props4 ref=node_ref />
+            <Child .. props />
+            <Child with props /> // backwards compat
+            <Child: .. props2, /> // backwards compat
+            <Child ref=node_ref.clone() .. props3 />
+            <Child .. props4 ref=node_ref />
         </>
     };
 
@@ -256,7 +257,7 @@ fn compile_pass() {
             <Container int=1 />
             <Container int=1></Container>
 
-            <Container with props>
+            <Container .. props>
                 <></>
             </Container>
 

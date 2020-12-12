@@ -364,72 +364,100 @@ impl Parse for Props {
             key: None,
             prop_type: PropType::None,
         };
-        while let Some((token, _)) = input.cursor().ident() {
-            if token == "with" {
+        loop {
+            let cursor = input.cursor();
+            if let Some((punct, _)) = cursor.punct() {
+                if punct.as_char() == '.' {
+                    if let Some((punct, _)) = cursor.punct() {
+                        if punct.as_char() != '.' {
+                            continue
+                        }
+                    } else {
+                        continue
+                    }
+                    match props.prop_type {
+                        PropType::None => Ok(()),
+                        PropType::With(_) => Err(input.error("too many `with` tokens used")),
+                        PropType::List(_) => Err(syn::Error::new_spanned(&punct, COLLISION_MSG)),
+                    }?;
+
+                    input.parse::<Token![.]>()?;
+                    input.parse::<Token![.]>()?;
+                    props.prop_type = PropType::With(input.parse::<Ident>().map_err(|_| {
+                        syn::Error::new_spanned(&punct, "`with` must be followed by an identifier")
+                    })?);
+
+                    continue;
+                }
+            } else if let Some((token, _)) = cursor.ident() {
+                if token == "with" {
+                    match props.prop_type {
+                        PropType::None => Ok(()),
+                        PropType::With(_) => Err(input.error("too many `with` tokens used")),
+                        PropType::List(_) => Err(syn::Error::new_spanned(&token, COLLISION_MSG)),
+                    }?;
+
+                    input.parse::<Ident>()?;
+                    props.prop_type = PropType::With(input.parse::<Ident>().map_err(|_| {
+                        syn::Error::new_spanned(&token, "`with` must be followed by an identifier")
+                    })?);
+
+                    // Handle optional comma
+                    let _ = input.parse::<Token![,]>();
+                    continue;
+                }
+
+                if (HtmlProp::peek(input.cursor())).is_none() {
+                    break;
+                }
+
+                let prop = input.parse::<HtmlProp>()?;
+                if prop.label.to_string() == "ref" {
+                    match props.node_ref {
+                        None => Ok(()),
+                        Some(_) => Err(syn::Error::new_spanned(&prop.label, "too many refs set")),
+                    }?;
+
+                    props.node_ref = Some(prop.value);
+                    continue;
+                }
+                if prop.label.to_string() == "key" {
+                    match props.key {
+                        None => Ok(()),
+                        Some(_) => Err(syn::Error::new_spanned(&prop.label, "too many keys set")),
+                    }?;
+
+                    props.key = Some(prop.value);
+                    continue;
+                }
+
+                if prop.label.to_string() == "type" {
+                    return Err(syn::Error::new_spanned(&prop.label, "expected identifier"));
+                }
+
+                if !prop.label.extended.is_empty() {
+                    return Err(syn::Error::new_spanned(&prop.label, "expected identifier"));
+                }
+
+                if prop.question_mark.is_some() {
+                    return Err(syn::Error::new_spanned(
+                        &prop.label,
+                        "optional attributes are only supported on HTML tags. Yew components can use `Option<T>` properties to accomplish the same thing.",
+                    ));
+                }
+
                 match props.prop_type {
-                    PropType::None => Ok(()),
-                    PropType::With(_) => Err(input.error("too many `with` tokens used")),
-                    PropType::List(_) => Err(syn::Error::new_spanned(&token, COLLISION_MSG)),
-                }?;
-
-                input.parse::<Ident>()?;
-                props.prop_type = PropType::With(input.parse::<Ident>().map_err(|_| {
-                    syn::Error::new_spanned(&token, "`with` must be followed by an identifier")
-                })?);
-
-                // Handle optional comma
-                let _ = input.parse::<Token![,]>();
-                continue;
+                    ref mut prop_type @ PropType::None => {
+                        *prop_type = PropType::List(vec![prop]);
+                    }
+                    PropType::With(_) => return Err(syn::Error::new_spanned(&token, COLLISION_MSG)),
+                    PropType::List(ref mut list) => {
+                        list.push(prop);
+                    }
+                };
+            } else {
+                break
             }
-
-            if (HtmlProp::peek(input.cursor())).is_none() {
-                break;
-            }
-
-            let prop = input.parse::<HtmlProp>()?;
-            if prop.label.to_string() == "ref" {
-                match props.node_ref {
-                    None => Ok(()),
-                    Some(_) => Err(syn::Error::new_spanned(&prop.label, "too many refs set")),
-                }?;
-
-                props.node_ref = Some(prop.value);
-                continue;
-            }
-            if prop.label.to_string() == "key" {
-                match props.key {
-                    None => Ok(()),
-                    Some(_) => Err(syn::Error::new_spanned(&prop.label, "too many keys set")),
-                }?;
-
-                props.key = Some(prop.value);
-                continue;
-            }
-
-            if prop.label.to_string() == "type" {
-                return Err(syn::Error::new_spanned(&prop.label, "expected identifier"));
-            }
-
-            if !prop.label.extended.is_empty() {
-                return Err(syn::Error::new_spanned(&prop.label, "expected identifier"));
-            }
-
-            if prop.question_mark.is_some() {
-                return Err(syn::Error::new_spanned(
-                    &prop.label,
-                    "optional attributes are only supported on HTML tags. Yew components can use `Option<T>` properties to accomplish the same thing.",
-                ));
-            }
-
-            match props.prop_type {
-                ref mut prop_type @ PropType::None => {
-                    *prop_type = PropType::List(vec![prop]);
-                }
-                PropType::With(_) => return Err(syn::Error::new_spanned(&token, COLLISION_MSG)),
-                PropType::List(ref mut list) => {
-                    list.push(prop);
-                }
-            };
         }
 
         if let PropType::List(list) = &mut props.prop_type {
