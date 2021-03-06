@@ -339,3 +339,76 @@ pub mod prelude {
 }
 
 pub use self::prelude::*;
+
+/// Unfancy macro.
+pub mod unfancy {
+    /// An unfancy rendering macro.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// mod sub_module {
+    ///     use yew::prelude::*;
+    ///
+    ///     #[derive(Properties, Clone, Default)]
+    ///     pub struct MyComponentProps {
+    ///         pub x: u32,
+    ///         pub children: Html,
+    ///     }
+    ///
+    ///     pub struct MyComponent;
+    ///
+    ///     impl Component for MyComponent {
+    ///         type Properties = MyComponentProps;
+    /// #       type Message = ();
+    ///
+    ///         // ...
+    ///
+    /// #       fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self { unimplemented!() }
+    /// #       fn update(&mut self, _msg: Self::Message) -> ShouldRender { unimplemented!() }
+    /// #       fn change(&mut self, _props: Self::Properties) -> ShouldRender { unimplemented!() }
+    /// #       fn view(&self) -> Html { unimplemented!() }
+    ///     }
+    /// }
+    ///
+    /// use yew::render;
+    /// use sub_module::MyComponent;
+    ///
+    /// let other_component = render!(MyComponent { x: 64 });
+    /// render!(
+    ///     MyComponent {
+    ///         x: 32,
+    ///     },
+    ///     "child1",
+    ///     "child2",
+    ///     { format!("child{}", 3) },
+    ///     other_component,
+    /// );
+    /// ```
+    #[macro_export]
+    macro_rules! render {
+        ($i:ident { $( $f:ident $(: $e:expr)? ),+ $(,)? } $(,)? ) => {{
+            type Props = <$i as $crate::Component>::Properties;
+            let mut props = Props {
+                $($f $(: $e)+),+,
+                ..Default::default()
+            };
+            $crate::virtual_dom::VNode::from(
+                $crate::virtual_dom::VComp::new::<$i>(props, Default::default(), None),
+            )
+        }};
+        ($i:ident { $( $f:ident $(: $e:expr)? ),+ $(,)? } $(, $x:expr)* $(,)? ) => {{
+            let mut children = $crate::virtual_dom::VList::new();
+            $(children.add_child($crate::html!($x));)*
+            type Props = <$i as $crate::Component>::Properties;
+            let mut props = Props {
+                $($f $(: $e)+),+,
+                children: $crate::virtual_dom::VNode::from(children),
+                ..Default::default()
+            };
+            $crate::virtual_dom::VNode::from(
+                $crate::virtual_dom::VComp::new::<$i>(props, Default::default(), None),
+            )
+        }};
+    }
+}

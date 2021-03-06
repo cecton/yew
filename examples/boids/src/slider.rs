@@ -8,7 +8,7 @@ fn next_slider_id() -> usize {
     SLIDER_ID.with(|cell| cell.replace(cell.get() + 1))
 }
 
-#[derive(Clone, Debug, PartialEq, Properties)]
+#[derive(Clone, Debug, PartialEq, Properties, Default)]
 pub struct Props {
     pub label: &'static str,
     pub value: f64,

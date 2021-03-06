@@ -115,13 +115,24 @@ impl Model {
             }
         }
 
+        let number_of_boids = yew::render!(Slider {
+            label: "Number of Boids",
+            min: 1.0,
+            max: 600.0,
+            onchange: settings_callback!(link, settings; boids as usize),
+            value: settings.boids as f64,
+        });
+
         html! {
             <div class="settings">
+                {number_of_boids}
+                /*
                 <Slider label="Number of Boids"
                     min=1.0 max=600.0
                     onchange=settings_callback!(link, settings; boids as usize)
                     value=settings.boids as f64
                 />
+                */
                 <Slider label="View Distance"
                     max=500.0 step=10.0
                     onchange=settings_callback!(link, settings; visible_range)
